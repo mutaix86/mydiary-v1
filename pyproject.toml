@@ -1,0 +1,16 @@
+[project]
+name = "mydiary-v1"
+description = "A RESTful API for MyDiary front-end, implemented with Flask, using JWT and Postgres."
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "coverage==4.5.1",
+    "coveralls==1.3.0",
+    "faker==0.8.17",
+    "flask==1.0.2",
+    "psycopg2-binary==2.7.5",
+    "py-bcrypt==0.4",
+    "pyjwt==1.6.4",
+    "pytest==3.6.3",
+    "python-dotenv==0.8.2",
+]

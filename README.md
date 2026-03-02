@@ -50,7 +50,7 @@ Set the variables on this files to suit your preferences and environment.
 
 Create a virtual environment
 
-`$ python3 -m venv venv`
+`$ uv venv
 
 Activate the virtual environment
 
@@ -58,7 +58,7 @@ Activate the virtual environment
 
 Install project dependencies
 
-`$ pip install -r requirements.txt`
+`$ uv sync
 
 #### Running tests
 Create a testing database 

@@ -4,11 +4,11 @@ language:
 
 # python versions supported
 python:
-  - 3.6
+  - 3.12
 
 # install dependencies
 install:
-  - pip install -r requirements.txt
+  - uv sync --frozen
 
 services:
   # start postgres
@@ -23,8 +23,9 @@ before_script:
 
 script:
   # run tests with coverage
-  - coverage run --source=app -m pytest  && coverage report
+  - uv run pytest && uv run coverage report
 
 after_success:
   # coverage report
-  - coveralls
+  - uv tool install coveralls
+  - uv tool run coveralls
