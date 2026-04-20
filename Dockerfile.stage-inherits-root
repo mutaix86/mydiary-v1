@@ -1,0 +1,31 @@
+# Scenario: final stage is ``FROM build-stage-alias`` with no USER of its own;
+# the aliased parent also has no USER → effective_user walks the chain and
+# returns None.
+# Expected MT behaviour: flagged for fix; the modification goes into the final
+# stage (``runtime``), not the aliased parent (``base``).
+FROM python:3.12-slim AS base
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+FROM base AS deps
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+FROM deps AS runtime
+
+WORKDIR /app
+
+COPY . .
+
+ENV FLASK_APP=app
+ENV FLASK_RUN_HOST=0.0.0.0
+
+EXPOSE 5000
+
+CMD ["flask", "run"]
