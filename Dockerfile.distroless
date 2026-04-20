@@ -22,4 +22,5 @@ ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
 
 EXPOSE 5000
 
+USER nonroot
 CMD ["-m", "flask", "run", "--host=0.0.0.0"]
