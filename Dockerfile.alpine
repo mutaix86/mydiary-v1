@@ -21,4 +21,8 @@ ENV FLASK_RUN_HOST=0.0.0.0
 
 EXPOSE 5000
 
+
+# Run as a non-root user for container security
+RUN addgroup -S app && adduser -S -u 1001 -G app app
+USER 1001
 CMD ["flask", "run"]
