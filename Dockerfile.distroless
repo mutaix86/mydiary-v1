@@ -1,0 +1,25 @@
+# Scenario: distroless image (the default root variant, not the :nonroot tag).
+# Expected MT behaviour: distroless family + no builtin nonroot detected →
+# insert ``USER nonroot`` without a RUN block (all distroless images ship
+# a ready-made nonroot user at UID 65532).
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+
+FROM gcr.io/distroless/python3-debian12
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+COPY . .
+
+ENV FLASK_APP=app
+ENV PYTHONPATH=/usr/local/lib/python3.11/site-packages
+
+EXPOSE 5000
+
+CMD ["-m", "flask", "run", "--host=0.0.0.0"]

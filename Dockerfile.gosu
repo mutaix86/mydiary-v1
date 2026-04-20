@@ -1,0 +1,35 @@
+# Scenario: image starts as root but delegates privilege drop to gosu in the
+# entrypoint script (mirrors the Redis / PostgreSQL official-library pattern).
+# Expected MT behaviour: uses_runtime_privilege_drop detects ``gosu`` → skipped
+# even though no USER directive is present.
+FROM python:3.12-slim
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        gosu \
+        libpq-dev \
+        build-essential; \
+    rm -rf /var/lib/apt/lists/*; \
+    gosu nobody true; \
+    groupadd --system app; \
+    useradd --system --uid 1001 --gid app --create-home app
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENV FLASK_APP=app
+ENV FLASK_RUN_HOST=0.0.0.0
+
+EXPOSE 5000
+
+# The entrypoint is expected to call ``exec gosu app flask run`` to step
+# down from root before launching the app.
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["flask", "run"]

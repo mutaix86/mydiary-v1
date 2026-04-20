@@ -1,0 +1,17 @@
+# Scenario: Red Hat UBI base, no USER directive.
+# Expected MT behaviour: rhel family → groupadd --system / useradd --system + USER 1001.
+FROM registry.access.redhat.com/ubi9/python-312
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV FLASK_APP=app
+ENV FLASK_RUN_HOST=0.0.0.0
+
+EXPOSE 5000
+
+CMD ["flask", "run"]

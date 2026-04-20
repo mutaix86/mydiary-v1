@@ -1,0 +1,24 @@
+# Scenario: USER directive is explicitly set to root.
+# Expected MT behaviour: detect as needs_fix=True; the existing USER root line
+# should be replaced rather than appended.
+FROM python:3.12-slim
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV FLASK_APP=app
+ENV FLASK_RUN_HOST=0.0.0.0
+
+USER root
+
+EXPOSE 5000
+
+CMD ["flask", "run"]
